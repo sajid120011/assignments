@@ -1,0 +1,98 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#define MAX_NAME_LENGTH 20
+#define NUM_DEPARTMENTS 4
+#define NUM_ROLES 5
+#define NUM_EMPLOYEES_PER_DEPARTMENT 5
+#define MIN_ATTRIBUTE_VALUE 1
+#define MAX_ATTRIBUTE_VALUE 100
+struct Employee 
+{
+    char name[MAX_NAME_LENGTH];
+    char role[MAX_NAME_LENGTH];
+    int communication;
+    int teamwork;
+    int creativity;
+};
+struct Department 
+{
+    char name[MAX_NAME_LENGTH];
+    struct Employee employees[NUM_EMPLOYEES_PER_DEPARTMENT];
+};
+void generateRandomName(char *namePool[], int poolSize, char *outputName) 
+{
+    int randomIndex = rand() % poolSize;
+    strcpy(outputName, namePool[randomIndex]);
+    for (int i = randomIndex; i < poolSize - 1; i++) 
+    {
+        namePool[i] = namePool[i + 1];
+    }
+}
+void initializeEmployee(struct Employee *employee) 
+{
+    employee->communication = rand() % (MAX_ATTRIBUTE_VALUE - MIN_ATTRIBUTE_VALUE + 1) + MIN_ATTRIBUTE_VALUE;
+    employee->teamwork = rand() % (MAX_ATTRIBUTE_VALUE - MIN_ATTRIBUTE_VALUE + 1) + MIN_ATTRIBUTE_VALUE;
+    employee->creativity = rand() % (MAX_ATTRIBUTE_VALUE - MIN_ATTRIBUTE_VALUE + 1) + MIN_ATTRIBUTE_VALUE;
+}
+void initializeDepartment(struct Department *department, char *namePool[], int poolSize) 
+{
+    char *roles[NUM_ROLES] = {"Director", "Executive", "Manager", "Employee", "Trainee"};
+    for (int i = 0; i < NUM_EMPLOYEES_PER_DEPARTMENT; i++) 
+    {
+        generateRandomName(namePool, poolSize, department->employees[i].name);
+        strcpy(department->employees[i].role, roles[i]);
+        initializeEmployee(&department->employees[i]);
+    }
+}
+int computeDepartmentSum(struct Department *department) 
+{
+    int sum = 0;
+    for (int i = 0; i < NUM_EMPLOYEES_PER_DEPARTMENT; i++) 
+    {
+        sum += department->employees[i].communication +
+               department->employees[i].teamwork +
+               department->employees[i].creativity;
+    }
+    return sum;
+}
+int main() 
+{
+    printf("23k-0077\n");
+    char *namePool[] = {"Alice", "Bob", "Charlie", "David", "Emma", "Frank", "Grace", "Henry", "Ivy", "Jack",
+                        "Katie", "Leo", "Mia", "Noah", "Olivia", "Peter", "Quinn", "Rachel", "Sam", "Taylor"};
+    srand((unsigned int)time(NULL));
+    struct Department departments[NUM_DEPARTMENTS];
+    for (int i = 0; i < NUM_DEPARTMENTS; i++) 
+    {
+        generateRandomName(namePool, sizeof(namePool) / sizeof(namePool[0]), departments[i].name);
+        initializeDepartment(&departments[i], namePool, sizeof(namePool) / sizeof(namePool[0]));
+    }
+    int departmentSums[NUM_DEPARTMENTS];
+    for (int i = 0; i < NUM_DEPARTMENTS; i++) 
+    {
+        departmentSums[i] = computeDepartmentSum(&departments[i]);
+    }
+    int bestDepartmentIndex = 0;
+    for (int i = 1; i < NUM_DEPARTMENTS; i++) 
+    {
+        if (departmentSums[i] > departmentSums[bestDepartmentIndex]) 
+        {
+            bestDepartmentIndex = i;
+        }
+    }
+    printf("Department\tSum of Values\n");
+    for (int i = 0; i < NUM_DEPARTMENTS; i++) 
+    {
+        printf("%s\t\t%d\n", departments[i].name, departmentSums[i]);
+    }
+    printf("\nBest Department: %s\n", departments[bestDepartmentIndex].name);
+    printf("%-10s %-15s %-15s %-15s %-15s\n", "Name", "Role", "Communication", "Teamwork", "Creativity");
+    for (int i = 0; i < NUM_EMPLOYEES_PER_DEPARTMENT; i++) 
+    {
+        struct Employee *employee = &departments[bestDepartmentIndex].employees[i];
+        printf("%-10s %-15s %-15d %-15d %-15d\n", employee->name, employee->role, employee->communication,
+               employee->teamwork, employee->creativity);
+    }
+    return 0;
+}
