@@ -1,0 +1,66 @@
+//compiled using online compiler so it isn't accessing a file
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#define MAX_ID_LENGTH 10
+#define MAX_NAME_LENGTH 50
+#define MAX_SALARY_LENGTH 10
+struct PersonalRecord 
+{
+    char id[MAX_ID_LENGTH];
+    char name[MAX_NAME_LENGTH];
+};
+struct DepartmentRecord 
+{
+    char id[MAX_ID_LENGTH];
+    char salary[MAX_SALARY_LENGTH];
+};
+struct CombinedRecord 
+{
+    char id[MAX_ID_LENGTH];
+    char name[MAX_NAME_LENGTH];
+    char salary[MAX_SALARY_LENGTH];
+};
+void mergeAndWriteToFile(const char *personalFileName, const char *departmentFileName, const char *combineFileName, const char *recordIDs[]) {
+    FILE *personalFile = fopen(personalFileName, "r");
+    FILE *departmentFile = fopen(departmentFileName, "r");
+    FILE *combineFile = fopen(combineFileName, "a");
+    if (personalFile == NULL || departmentFile == NULL || combineFile == NULL) {
+        perror("Error opening file");
+        exit(EXIT_FAILURE);
+    }
+    struct PersonalRecord personalRecord;
+    struct DepartmentRecord departmentRecord;
+    struct CombinedRecord combinedRecord;
+    while (fscanf(personalFile, "%s %s", personalRecord.id, personalRecord.name) == 2) 
+    {
+        if (fscanf(departmentFile, "%s %s", departmentRecord.id, departmentRecord.salary) != 2) 
+        {
+            fprintf(stderr, "Error reading from Department.txt\n");
+            exit(EXIT_FAILURE);
+        }
+        for (int i = 0; recordIDs[i] != NULL; i++) 
+        {
+            if (strcmp(recordIDs[i], personalRecord.id) == 0) 
+            {
+                strcpy(combinedRecord.id, personalRecord.id);
+                strcpy(combinedRecord.name, personalRecord.name);
+                strcpy(combinedRecord.salary, departmentRecord.salary);
+                fprintf(combineFile, "%s %s %s\n", combinedRecord.id, combinedRecord.name, combinedRecord.salary);
+                break;
+            }
+        }
+    }
+    fclose(personalFile);
+    fclose(departmentFile);
+    fclose(combineFile);
+}
+int main() 
+{
+    printf("23k-0077");
+    const char *recordIDs[] = {"001", "003", NULL};
+    mergeAndWriteToFile("Personal.txt", "Department.txt", "Combine.txt", recordIDs);
+    printf("Records merged and written to Combine.txt successfully.\n");
+    return 0;
+}
